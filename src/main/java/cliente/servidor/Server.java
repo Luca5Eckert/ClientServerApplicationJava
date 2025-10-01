@@ -35,21 +35,17 @@ public class Server {
     public void initCommunication(){
         try(var serverSocket = initServerSocket()){
 
-            while(true){
-                var socketCommunication = getCommunicationWithClient(serverSocket);
+            var socketCommunication = getCommunicationWithClient(serverSocket);
+            var reader = toInstanceReader(socketCommunication);
+            var writer = toInstanceWritter(socketCommunication);
 
-                var reader = toInstanceReader(socketCommunication);
-
-                var message = reader.readLine();
+            String message;
+            while ((message = reader.readLine()) != null) {
                 System.out.println("Mensagem do cliente: " + message);
-
-                var writer = toInstanceWritter(socketCommunication);
                 writer.println("Olá, cliente! Sua mensagem foi recebida com sucesso.");
-
-                reader.close();
-                writer.close();
-
             }
+            reader.close();
+            writer.close();
 
         } catch (IOException e) {
             throw new RuntimeException(e);
